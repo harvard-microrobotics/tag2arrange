@@ -6,7 +6,7 @@
     <arg name="debug" default="False" doc="Whether debug is on" />
     <arg name="suffix" default="0" doc="Suffix to add to nodes" />
     <arg name="tag_topic" default="/tag_detections" doc="April tag topic" />
-    <arg name="pose_topic" default="/desired_pose" doc="Pose setpoint topic" />
+    <arg name="arrange_topic" default="/desired_arrange" doc="Arragement setpoint topic" />
     <arg name="rate" default="30" doc="Rate (in Hz) to run the controller (this should roughly match your camera's framerate)" />
 
 
@@ -20,7 +20,7 @@
         <rosparam file="$(find tag2arrange)/config/controllers/$(arg controller)" command="load"/>
         <param name="DEBUG" type="bool" value="$(arg debug)"/>
         <param name="tag_topic" type="str" value="$(arg tag_topic)"/>
-        <param name="pose_topic" type="str" value="$(arg pose_topic)"/>
+        <param name="arrange_topic" type="str" value="$(arg arrange_topic)"/>
         <param name="controller_rate" type="double" value="$(arg rate)"/>
     </node>
 

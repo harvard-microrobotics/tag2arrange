@@ -1,6 +1,6 @@
 # Tag2Arrange
 
-Visual servoing for a soft hand.
+Using April tags to controler finger arrangement
 
 ## Installation
 1. Install [ROS](https://www.ros.org/)
@@ -38,7 +38,7 @@ Visual servoing for a soft hand.
 4. Start the pressure controller
     - `roslaunch pressure_controller_ros bringupHID.launch profile:=anthro8 hw_profile:=hid`
 5. Start the visual servoing controller
-    - `roslaunch ihm_servoing run_controller.launch controller:=default.yaml`
+    - `roslaunch tag2arrange run_controller.launch controller:=default.yaml`
 6. Send single desired poses
     - `rostopic pub desired_pose geometry_msgs/Pose "{'position': [0.0, 0.0, 0.0], 'orientation': [0.0, 0.0, 0.0, 0.0]}"`
 7. Send an desired pose trajectory
