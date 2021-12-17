@@ -15,7 +15,7 @@
     <arg name="_suffix_helper" unless="$(arg suffix)" value=""  />
 
     <!-- Start the main serial sender -->
-    <node name="ihm_servo_node$(arg _suffix_helper)" pkg="ihm_servoing" type="controller_node.py" respawn="false"
+    <node name="ihm_servo_node$(arg _suffix_helper)" pkg="tag2arrange" type="controller_node.py" respawn="false"
         output="screen">
         <rosparam file="$(find ihm_servoing)/config/controllers/$(arg controller)" command="load"/>
         <param name="DEBUG" type="bool" value="$(arg debug)"/>
