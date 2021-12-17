@@ -23,7 +23,7 @@ import numpy as np
 
 
 class Controller:
-    def __init__(self, pressure_server = "pressure_control"):
+    def __init__(self, pressure_server = "dynamixel"):
         self.pressure_server_name = pressure_server
         self.DEBUG = rospy.get_param(rospy.get_name()+"/DEBUG",False)
         self.config = rospy.get_param(rospy.get_name()+"/controller",None)
@@ -31,7 +31,7 @@ class Controller:
         self.params = self.config.get('parameters',None)
         self.controller_rate = float(rospy.get_param(rospy.get_name()+"/controller_rate",30))
 
-        self.num_channels = rospy.get_param('/pressure_control/num_channels',[])
+        self.num_channels = rospy.get_param('/dynamixel/num_channels',[])
         self.num_channels_total = sum(self.num_channels)
 
         for key in self.params:

@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>ihm_servoing</name>
+  <name>tag2arrange</name>
   <version>0.0.0</version>
-  <description>The ihm_servoing package</description>
+  <description>The tag2arrange package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
   <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
-  <maintainer email="cbteeple@g.harvard.edu">teepsmart</maintainer>
+  <maintainer email="randallstlouis@college.harvard.edu">ranstlouis</maintainer>
 
 
   <!-- One license tag required, multiple allowed, one license per tag -->

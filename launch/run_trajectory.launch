@@ -17,9 +17,9 @@
     <arg name="_suffix_helper" unless="$(arg suffix)" value=""  />
 
     <!-- Start the main serial sender -->
-    <node name="ihm_servo_trajectory_node$(arg _suffix_helper)" pkg="ihm_servoing" type="run_trajectory.py" respawn="false"
+    <node name="tag2arrange_trajectory_node$(arg _suffix_helper)" pkg="tag2arrange" type="run_trajectory.py" respawn="false"
         output="screen">
-        <rosparam file="$(find ihm_servoing)/config/trajectories/$(arg traj)" command="load"/>
+        <rosparam file="$(find tag2arrange)/config/trajectories/$(arg traj)" command="load"/>
         <param name="DEBUG" type="bool" value="$(arg debug)"/>
         <param name="pose_topic" type="str" value="$(arg pose_topic)"/>
         <param name="trajectory_rate" type="double" value="$(arg rate)"/>

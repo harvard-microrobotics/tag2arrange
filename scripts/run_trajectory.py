@@ -22,7 +22,7 @@ import sorotraj
 
 
 class TrajSender:
-    def __init__(self, pressure_server = "pressure_control"):
+    def __init__(self, pressure_server = "dynamixel"):
         self.pressure_server_name = pressure_server
         self.DEBUG = rospy.get_param(rospy.get_name()+"/DEBUG",False)
         self.save_data = rospy.get_param(rospy.get_name()+"/save_data",False)

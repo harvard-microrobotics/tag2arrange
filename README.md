@@ -1,4 +1,4 @@
-# ihm_servoing
+# Tag2Arrange
 
 Visual servoing for a soft hand.
 
