@@ -1,0 +1,24 @@
+items:
+# # Dictionary matching each April tag to an arrangement value
+#
+# ## General remarks#
+#
+# - name is optional
+#
+# ### Syntax
+#
+# items:
+#   {
+#     'TAG_ID':{name: ITEM_NAME, arrange: ARRANGEMENT_VALUE},
+#     ...
+#   }
+
+  items:  
+    {'19': {name: test1, arrange: 90}, 
+     '20': {name: test2, arrange: 20},
+     '21': {name: test3, arrange: 45},
+     '22': {name: test4, arrange: 80},
+     '23': {name: test5, arrange: 0},
+   }
+
+  

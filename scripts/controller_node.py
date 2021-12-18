@@ -7,14 +7,9 @@ import actionlib
 # Brings in the messages used by the fibonacci action, including the
 # goal message and the result message.
 from pressure_controller_ros.msg import CommandAction, CommandGoal
-from geometry_msgs.msg import Pose as PoseMsg
-from geometry_msgs.msg import Quaternion, Point
 from apriltag_ros.msg import AprilTagDetectionArray
 
-from tf.transformations import euler_from_quaternion, quaternion_from_euler
-
 import time
-import copy
 import sys
 import os
 import numpy as np
@@ -26,16 +21,14 @@ class Controller:
     def __init__(self, pressure_server = "dynamixel"):
         self.pressure_server_name = pressure_server
         self.DEBUG = rospy.get_param(rospy.get_name()+"/DEBUG",False)
-        self.config = rospy.get_param(rospy.get_name()+"/controller",None)
-        self.type = self.config.get('type',None)
-        self.params = self.config.get('parameters',None)
+        self.config = rospy.get_param(rospy.get_name()+"/items",None)
+        self.items = self.config.get('items',None)        
         self.controller_rate = float(rospy.get_param(rospy.get_name()+"/controller_rate",30))
 
         self.num_channels = rospy.get_param('/dynamixel/num_channels',[])
         self.num_channels_total = sum(self.num_channels)
 
-        for key in self.params:
-            self.params[key] = np.array(self.params[key])
+        
 
         # Connect to the pressure controller command server
         self.command_client = actionlib.SimpleActionClient(self.pressure_server_name, CommandAction)
@@ -56,6 +49,10 @@ class Controller:
         self.is_init = False
 
    
+    def get_arrange(self,tag_id):
+        #Check tag id is in items
+        #If it is in items, extract the arrangement value and return        
+        return self.items[str(tag_id)]['arrange']
 
 
     def send_setpoint(self, pressures, transition_time=None):
@@ -103,13 +100,13 @@ class Controller:
         detection = detections[0]
         #Get tag id
         tag_id = detection.id
-        #From the tag id, get the arrangement
-        arrange = [45] #This is where a function needs to be called that extracts the arrangemetn value
+        #From the tag id, get the arrangement        
+        arrange = self.get_arrange(tag_id[0]) #[0] is because tag_id comes as a tuple
+        arrange = [arrange] #For formatting, should probably change later
         
         
         # Send arrangement value
-        if arrange is not None:            
-            print(arrange)
+        if arrange is not None:
             self.send_setpoint(arrange)
         elif not self.is_init:
             rest=self.params.get('rest',None) #TODO: Figure out what this does
