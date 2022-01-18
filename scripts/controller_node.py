@@ -53,8 +53,7 @@ class Controller:
         #Check tag id is in items
         #If it is in items, extract the arrangement value and return        
         return self.items[str(tag_id)]['arrange']
-
-
+    
     def send_setpoint(self, pressures, transition_time=None):
 
         if transition_time is None:
