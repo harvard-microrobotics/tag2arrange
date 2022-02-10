@@ -8,11 +8,17 @@ import actionlib
 # goal message and the result message.
 from pressure_controller_ros.msg import CommandAction, CommandGoal
 from apriltag_ros.msg import AprilTagDetectionArray
+from geometry_msgs.msg import Pose as PoseMsg
+from geometry_msgs.msg import Quaternion, Point
+
+from tf.transformations import euler_from_quaternion, quaternion_from_euler
 
 import time
 import sys
+import copy
 import os
 import numpy as np
+import pandas as pd
 
 #import sorotraj
 
@@ -20,15 +26,16 @@ import numpy as np
 class Controller:
     def __init__(self, pressure_server = "dynamixel"):
         self.pressure_server_name = pressure_server
-        self.DEBUG = rospy.get_param(rospy.get_name()+"/DEBUG",False)
-        self.config = rospy.get_param(rospy.get_name()+"/items",None)
-        self.items = self.config.get('items',None)        
+        self.DEBUG = rospy.get_param(rospy.get_name()+"/DEBUG",False)              
         self.controller_rate = float(rospy.get_param(rospy.get_name()+"/controller_rate",30))
 
         self.num_channels = rospy.get_param('/dynamixel/num_channels',[])
         self.num_channels_total = sum(self.num_channels)
 
-        
+        self.config = rospy.get_param(rospy.get_name()+"/runs",None)
+        self.arrangements = self.config.get('arrangements',[])    
+        self.num_reps = self.config.get('num_reps',1)
+        self.save_path = self.config.get('save_path',None)
 
         # Connect to the pressure controller command server
         self.command_client = actionlib.SimpleActionClient(self.pressure_server_name, CommandAction)
@@ -44,15 +51,41 @@ class Controller:
         tag_topic = rospy.get_param(rospy.get_name()+"/tag_topic",None)
         rospy.Subscriber(tag_topic, AprilTagDetectionArray, self.tag_callback)
 
-        # Set up some parameters       
+        # Set up some parameters 
+        self.init_pose = None
+        self.init_time = None
+
         self.is_shutdown=False
         self.is_init = False
+
         self.curr_arrange = None
+
+        self.data = []
+        self.curr_pose = {}
+        self.detected = False
+
+
    
-    def get_arrange(self,tag_id):
-        #Check tag id is in items
-        #If it is in items, extract the arrangement value and return        
-        return self.items[str(tag_id)]['arrange']
+    
+    def run_cycle(self):          
+        self.detected = True      
+        if self.detected == True:
+            print("Running Cycle Test")
+            for arrange in self.arrangements:
+                for i in range(self.num_reps):
+                    self.send_command("set",[0,float(arrange)])
+                    time.sleep(2)
+                    self.curr_pose['arrangement'] = arrange
+                    self.data.append(self.curr_pose)
+                    time.sleep(0.2)            
+                    self.send_command("set",[0,0])
+                    time.sleep(1)
+
+            #Save data
+            df = pd.DataFrame.from_dict(self.data, orient='columns')            
+            file_name = self.save_path
+            df.to_csv(file_name)            
+            self.detected = False
     
     def send_setpoint(self, pressures, transition_time=None):
 
@@ -99,24 +132,31 @@ class Controller:
         detection = detections[0]
         #Get tag id
         tag_id = detection.id
-        #From the tag id, get the arrangement        
-        arrange = self.get_arrange(tag_id[0]) #[0] is because tag_id comes as a tuple
-        arrange = [arrange] #For formatting, should probably change later
+        self.detected = True
         
-        
-        # Send arrangement value
-        if arrange is not None:       
-            if arrange != self.curr_arrange:     
-                raw_input("New Item Detected. Do you want to change arrangements?")
+        pose = detection.pose.pose.pose
 
-                self.send_setpoint(arrange)
-                self.curr_arrange = arrange
-        elif not self.is_init:
-            rest=self.params.get('rest',None) #TODO: Figure out what this does
-            if rest is not None:
-                self.send_setpoint(rest,1.0)
-            self.is_init=True
+        pos_raw = pose.position
+        ori_raw = pose.orientation
 
+        pos = np.array([pos_raw.x, pos_raw.y, pos_raw.z])
+        ori = euler_from_quaternion([ori_raw.x, ori_raw.y, ori_raw.z, ori_raw.w])
+        ori = np.array(ori)
+        pose={'pos_x':pos[0], 'pos_y':pos[1],'pos_z':pos[2],'ori_x':ori[0],'ori_y':ori[1],'ori_z':ori[2]}
+        if self.init_pose is None:
+            self.init_pose = copy.deepcopy(pose)
+            self.init_time = copy.deepcopy(time)
+
+            self.last_pose = copy.deepcopy(pose)
+            self.last_time = copy.deepcopy(time)
+            return
+        # Calculate relative time and pose
+        time_rel = time - self.init_time
+
+        pose_rel = {}
+        for key in pose:
+            pose_rel[key] = pose[key] - self.init_pose[key]
+        self.curr_pose = pose_rel
 
     def shutdown(self):
         self.is_shutdown=True
@@ -135,8 +175,11 @@ if __name__ == '__main__':
     try:
         rospy.init_node('controller_node', disable_signals=False)
         node = Controller()
-        rospy.on_shutdown(node.shutdown)
+        rospy.on_shutdown(node.shutdown)        
+        node.run_cycle()
+        print("Done")
         rospy.spin()
+        
     except:
         raise
 
