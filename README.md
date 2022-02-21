@@ -1,6 +1,6 @@
 # Tag2Arrange
 
-Using April tags to controler finger arrangement
+Using April tags to control finger arrangement
 
 ## Installation
 1. Install [ROS](https://www.ros.org/)
@@ -23,8 +23,8 @@ Using April tags to controler finger arrangement
 2. Make a new verison of `usb_cam-test.launch` to use your camera settings
 3. [Calibrate your camera](https://github.com/NVlabs/Deep_Object_Pose/blob/master/doc/camera_tutorial.md)
 4. Set up a controller in the `config/controllers` directory.
-5. Set up a trajectory in the `config/trajectories` directory.
-    - _Trajectories use the [sorotraj](https://pypi.org/project/sorotraj/) package for trajectory definitions_
+5. Set up item directory in the `config/items` directory.
+    
 
 ## Usage
 
@@ -36,10 +36,8 @@ Using April tags to controler finger arrangement
     - If using rectified camera image: `roslaunch apriltag_ros continuous_detection.launch camera_name:=usb_cam`
     - If you just want to test without calibrating: `roslaunch apriltag_ros continuous_detection.launch camera_name:=usb_cam image_topic:=image_raw`
 4. Start the pressure controller
-    - `roslaunch pressure_controller_ros bringupHID.launch profile:=anthro8 hw_profile:=hid`
-5. Start the visual servoing controller
-    - `roslaunch tag2arrange run_controller.launch controller:=default.yaml`
-6. Send single desired poses
-    - `rostopic pub desired_pose geometry_msgs/Pose "{'position': [0.0, 0.0, 0.0], 'orientation': [0.0, 0.0, 0.0, 0.0]}"`
-7. Send an desired pose trajectory
-    - `roslaunch ihm_servoing run_trajectory.launch traj:=square.yaml reps:=2 speed:=1.0 save:=true`
+    - `roslaunch pressure_controller_ros bringup_HID.launch profile:=anthro8 hw_profile:=hid`
+5. Start Dynamixel motor
+    - `roslaunch pressure_controller_configs bringup_dynamixel.launch profile:=dynamixel_single hw_profile:=dynamixel_default`
+7. Start the controller
+    - `roslaunch tag2arrange run_controller.launch pctrl:=True`
