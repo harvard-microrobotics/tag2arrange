@@ -1,0 +1,6 @@
+runs: 
+  #Start arrangement with 0 becasue the first one gets thrown out
+  #speeds: [0,100,200,400,600,800,1000]  
+  speeds: [0,100,200,300,400,500,600,700,800,900,1000]
+  num_reps: 1
+  save_path: "/home/ranstlouis/Documents/data/speed_data_finger2.csv"

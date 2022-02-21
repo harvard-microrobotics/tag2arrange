@@ -2,16 +2,12 @@
 <launch>
 
     <!-- get the arguments from  -->
-    <arg name="items" default="items.yaml" doc="Item Dictionary" />
+    <arg name="runs" default="runs.yaml" doc="Arrangements to Cycle Around" />
     <arg name="debug" default="False" doc="Whether debug is on" />
     <arg name="suffix" default="0" doc="Suffix to add to nodes" />
     <arg name="tag_topic" default="/tag_detections" doc="April tag topic" />
     <arg name="arrange_topic" default="/desired_arrange" doc="Arragement setpoint topic" />
     <arg name="rate" default="30" doc="Rate (in Hz) to run the controller (this should roughly match your camera's framerate)" />
-    <arg name="pctrl" default="False" doc="Using pressure controler or not"/>
-    <arg name="traj" default="4grasp" doc="Configuration profile to use" />
-    <arg name="speed_factor" default="1.0" doc="the speed to run the trajectory at" />
-    <arg name="reps" default="1" doc="The number of reps" />
 
 
     <!-- Generate helper arguments -->
@@ -19,18 +15,13 @@
     <arg name="_suffix_helper" unless="$(arg suffix)" value=""  />
 
     <!-- Start the main serial sender -->
-    <node name="tag2arrange_node$(arg _suffix_helper)" pkg="tag2arrange" type="controller_node.py" respawn="false"
+    <node name="cycle_node$(arg _suffix_helper)" pkg="tag2arrange" type="cycle_node.py" respawn="false"
         output="screen">
-        <rosparam file="$(find tag2arrange)/config/items/$(arg items)" command="load"/>
+        <rosparam file="$(find tag2arrange)/config/cycle_test/$(arg runs)" command="load"/>
         <param name="DEBUG" type="bool" value="$(arg debug)"/>
         <param name="tag_topic" type="str" value="$(arg tag_topic)"/>
         <param name="arrange_topic" type="str" value="$(arg arrange_topic)"/>
-        <param name="controller_rate" type="double" value="$(arg rate)"/>
-        <param name="pctrl" type="bool" value="$(arg pctrl)"/>
-        
-        <param name="traj_profile" type="str" value="$(find tag2arrange)/config/trajectories/$(arg traj)"/>
-        <param name="speed_factor" type="double" value="$(arg speed_factor)" />
-        <param name="num_reps" type="int" value="$(arg reps)" />
+        <param name="controller_rate" type="double" value="$(arg rate)"/>        
     </node>
 
 </launch>
