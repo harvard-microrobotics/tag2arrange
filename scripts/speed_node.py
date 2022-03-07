@@ -80,7 +80,7 @@ class Controller:
                 for i in range(self.num_reps):
                     self.save_data = True
                     time.sleep(5)
-                    self.send_command("set",[0,90])                    
+                    self.send_command("set",[0,88])                    
                     time.sleep(5)
                     self.send_command("set",[0,0])
                     self.save_data = False                    

@@ -19,8 +19,9 @@ items:
      '21': {name: test3, arrange: 45},
      '22': {name: test4, arrange: 80},
      '23': {name: test5, arrange: 0},
-     '12': {name: test6, arrange: 90},
+     '12': {name: test6, arrange: 0},
      '13': {name: test6, arrange: 0},
+     '14': {name: test6, arrange: 85},
    }
 
   

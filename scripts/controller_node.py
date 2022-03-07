@@ -135,7 +135,7 @@ class Controller:
                 self.send_setpoint(arrange)
                 self.curr_arrange = arrange
                 if self.p_ctrl:
-                    #time.sleep(4)
+                    time.sleep(2)
                     #self.send_setpoint([30],p_ctrl=True)
                     #time.sleep(3)
                     #self.send_setpoint([0],p_ctrl=True)
