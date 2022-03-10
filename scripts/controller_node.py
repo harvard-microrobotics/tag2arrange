@@ -18,6 +18,8 @@ import sorotraj
 from pressure_controller_ros.msg import *
 from pressure_controller_ros.live_traj_new import trajSender as pneu_traj_sender
 
+import rospkg
+from simple_ur_move.cartesian_trajectory_handler import CartesianTrajectoryHandler
 
 class Controller:
     def __init__(self, pressure_server = "dynamixel"):
@@ -30,7 +32,7 @@ class Controller:
         self.num_channels = rospy.get_param('/pressure_control/num_channels',[])
         self.num_channels_total = sum(self.num_channels)
 
-        #Load Trajectory information
+        #Load Finger Trajectory information
         self.traj_profile = rospy.get_param(rospy.get_name()+'/traj_profile')
         self.speed_factor = rospy.get_param(rospy.get_name()+'/speed_factor',1.0)
         self.num_reps = rospy.get_param(rospy.get_name()+'/num_reps',1)
@@ -48,6 +50,14 @@ class Controller:
             self.command_client_p.wait_for_server()
             self.set_data_stream(True)
 
+        self.arm_on = rospy.get_param(rospy.get_name()+"/arm",False)
+        self.arm_traj = rospy.get_param(rospy.get_name()+'/arm_traj_profile')
+        if self.arm_on:
+            traj_handler = CartesianTrajectoryHandler(
+                name="",
+                controller="pose_based_cartesian_traj_controller",
+                debug=False)
+            #filepath_config = os.path.join(rospkg.RosPack().get_path('tag2arrange'), 'config')            
         # Connect a callback function to send single desrired arrangement commands 
         arrange_topic = rospy.get_param(rospy.get_name()+"/arrange_topic",'/desired_arrange')
         
@@ -93,6 +103,9 @@ class Controller:
 
 
     def send_command(self,cmd, args, wait_for_ack=False, p_ctrl=False):
+        '''
+            Sends the command to the command client (pressure controller or arrangement)
+        '''
         goal = CommandGoal(command=cmd, args=args, wait_for_ack = wait_for_ack)                
         if p_ctrl and self.p_ctrl: 
             print(goal)           
@@ -105,8 +118,12 @@ class Controller:
 
 
     def tag_callback(self, msg): 
-        #This function should be called each time the tag_topic gets something
-        #It's result should be sending one arrangement value (in degrees)
+        '''
+            Callback function used by ROS each time the tag topic recieves something
+            This function is the main controller of the system. 
+            It reads the tag. Sends the arrangement, pressure and arm trajectory.
+        '''
+        
         if self.is_shutdown:
             return
 
@@ -136,23 +153,29 @@ class Controller:
                 self.curr_arrange = arrange
                 if self.p_ctrl:
                     time.sleep(2)
-                    #self.send_setpoint([30],p_ctrl=True)
-                    #time.sleep(3)
-                    #self.send_setpoint([0],p_ctrl=True)
-                    self.run_traj()
+                    if self.arm_on:
+                        #Run trajectory to get in position                    
+                    self.run_traj(self.traj_profile)
                     print("grasping")
+                    if self.arm_on:
+                        #After grasping, 
+
+                    
         elif not self.is_init:
             rest=self.params.get('rest',None) #TODO: Figure out what this does
             if rest is not None:
                 self.send_setpoint(rest,1.0)
             self.is_init=True
 
-    def run_traj(self):
+    def run_traj(self,traj):
+        '''
+            Run pressure trajectory for soft robotic fingers using sorotraj
+        '''
         # Make a sotortaj traj builder
         builder = sorotraj.TrajBuilder() # Make a traj-builder object
 
         # Load a trajectory from a file and make some modifications on the fly
-        file_to_use = self.traj_profile
+        file_to_use = traj
         builder.load_traj_def(file_to_use)
         traj_def = builder.get_definition()
         #traj_def['setpoints'][0] = [0.00, 10,10,  10,10,  10,10,  10,10] # Make some modifications to the definition (i.e. change some waypoints)
@@ -173,7 +196,17 @@ class Controller:
         traj_ros = hand_sender.build_traj(traj_use) # Convert the trajectory to a ROS trajectory
         hand_sender.execute_traj(traj_ros, blocking=False) # Send the trajectory
         hand_sender.traj_client.wait_for_result() # wait until the trajectory is finished
-
+    def run_armtraj(self,traj):
+        '''
+            Run motion trajectory for robotic arm
+        '''
+        # OR Set trajectory config directly
+        #config={TRAJECTORY CONFIG DICT}
+        #traj_handler.set_config(config)
+        traj_handler.load_config(filename=traj)        
+        traj_handler.set_initialize_time(3.0)
+        traj_handler.run_trajectory(blocking=True)
+        
     def shutdown(self):
         self.is_shutdown=True
         print('Setting all pressures to zero')
@@ -184,6 +217,7 @@ class Controller:
         print('Turning off data stream')
         self.set_data_stream(False)
         time.sleep(0.5)
+        traj_handler.shutdown()
         
         #self.command_client.cancel_all_goals()
 
