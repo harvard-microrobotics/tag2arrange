@@ -9,11 +9,12 @@
     <arg name="arrange_topic" default="/desired_arrange" doc="Arragement setpoint topic" />
     <arg name="rate" default="30" doc="Rate (in Hz) to run the controller (this should roughly match your camera's framerate)" />
     <arg name="pctrl" default="False" doc="Using pressure controler or not"/>
-    <arg name="arm" default="False" doc="Using arm or not"/>
-    <arg name="arm_traj" default="False" doc="Arm trajectory file"/>
-    <arg name="traj" default="4grasp" doc="Finger trajectory file" />
+    <arg name="arm" default="False" doc="Using arm or not"/>    
     <arg name="speed_factor" default="1.0" doc="the speed to run the trajectory at" />
     <arg name="reps" default="1" doc="The number of reps" />
+    <arg name="arm_traj" default="False" doc="Arm trajectory file"/>
+    <arg name="traj_profile" default="all_traj.yaml" doc="Finger trajectory file" />
+    <arg name="traj" default="start_grasp" doc="Finger trajectory file" />
 
 
     <!-- Generate helper arguments -->
@@ -30,8 +31,9 @@
         <param name="controller_rate" type="double" value="$(arg rate)"/>
         <param name="pctrl" type="bool" value="$(arg pctrl)"/>
         <param name="arm" type="bool" value="$(arg arm)"/>
+        <rosparam file="$(find tag2arrange)/config/trajectories/$(arg traj_profile)" command="load"/>     
+
         
-        <param name="traj_profile" type="str" value="$(find tag2arrange)/config/trajectories/finger_traj/$(arg traj)"/>
         <param name="arm_traj_profile" type="str" value="$(find tag2arrange)/config/trajectories/arm_traj/$(arg arm_traj)"/>
         <param name="speed_factor" type="double" value="$(arg speed_factor)" />
         <param name="num_reps" type="int" value="$(arg reps)" />

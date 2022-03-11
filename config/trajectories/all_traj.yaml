@@ -1,0 +1,5 @@
+start_grasp: "/home/armando/Documents/morpheus_ws/src/tag2arrange/config/trajectories/finger_traj/start_grasp"
+end_grasp: "/home/armando/Documents/morpheus_ws/src/tag2arrange/config/trajectories/finger_traj/end_grasp"
+start_pick: "/home/armando/Documents/morpheus_ws/src/tag2arrange/config/trajectories/arm_traj/start_pick.yaml"
+end_place: "/home/armando/Documents/morpheus_ws/src/tag2arrange/config/trajectories/arm_traj/end_place.yaml"
+finish_pnp: "/home/armando/Documents/morpheus_ws/src/tag2arrange/config/trajectories/arm_traj/finish_pnp.yaml"

@@ -32,8 +32,10 @@ class Controller:
         self.num_channels = rospy.get_param('/pressure_control/num_channels',[])
         self.num_channels_total = sum(self.num_channels)
 
-        #Load Finger Trajectory information
-        self.traj_profile = rospy.get_param(rospy.get_name()+'/traj_profile')
+        #Load Finger Trajectory information 
+        #self.traj_profile = rospy.get_param(rospy.get_name()+'/traj_profile')
+        self.start_grasp = rospy.get_param(rospy.get_name()+'/start_grasp',None)
+        self.end_grasp = rospy.get_param(rospy.get_name()+'/end_grasp',None)  
         self.speed_factor = rospy.get_param(rospy.get_name()+'/speed_factor',1.0)
         self.num_reps = rospy.get_param(rospy.get_name()+'/num_reps',1)
 
@@ -53,10 +55,13 @@ class Controller:
         self.arm_on = rospy.get_param(rospy.get_name()+"/arm",False)
         self.arm_traj = rospy.get_param(rospy.get_name()+'/arm_traj_profile')
         if self.arm_on:
-            traj_handler = CartesianTrajectoryHandler(
+            self.traj_handler = CartesianTrajectoryHandler(
                 name="",
                 controller="pose_based_cartesian_traj_controller",
                 debug=False)
+            self.start_pick = rospy.get_param(rospy.get_name()+'/start_pick',None)
+            self.end_place= rospy.get_param(rospy.get_name()+'/end_place',None)
+            self.finish_pnp = rospy.get_param(rospy.get_name()+'/finish_pnp',None)
             #filepath_config = os.path.join(rospkg.RosPack().get_path('tag2arrange'), 'config')            
         # Connect a callback function to send single desrired arrangement commands 
         arrange_topic = rospy.get_param(rospy.get_name()+"/arrange_topic",'/desired_arrange')
@@ -154,11 +159,22 @@ class Controller:
                 if self.p_ctrl:
                     time.sleep(2)
                     if self.arm_on:
-                        #Run trajectory to get in position                    
-                    self.run_traj(self.traj_profile)
-                    print("grasping")
+                        print("Move to item")
+                        #Run trajectory to get in position  
+                        self.run_armtraj(self.start_pick) 
+                    print("Grasp Item")                     
+                    self.run_traj(self.start_grasp)
+                    
                     if self.arm_on:
+                        print("Move the item to box")
                         #After grasping, 
+                        self.run_armtraj(self.end_place)
+                    print("Release item")    
+                    self.run_traj(self.end_grasp)
+                    if self.arm_on:
+                        print("Move back to start")
+                        #After grasping, 
+                        self.run_armtraj(self.finish_pnp)
 
                     
         elif not self.is_init:
@@ -203,9 +219,10 @@ class Controller:
         # OR Set trajectory config directly
         #config={TRAJECTORY CONFIG DICT}
         #traj_handler.set_config(config)
-        traj_handler.load_config(filename=traj)        
-        traj_handler.set_initialize_time(3.0)
-        traj_handler.run_trajectory(blocking=True)
+        self.traj_handler.load_config(filename=traj)        
+        self.traj_handler.set_initialize_time(3.0)
+        self.traj_handler.run_trajectory(blocking=True)
+        self.traj_handler.shutdown()
         
     def shutdown(self):
         self.is_shutdown=True
@@ -216,8 +233,8 @@ class Controller:
         time.sleep(2.2)
         print('Turning off data stream')
         self.set_data_stream(False)
-        time.sleep(0.5)
-        traj_handler.shutdown()
+        time.sleep(0.5)    
+            
         
         #self.command_client.cancel_all_goals()
 
