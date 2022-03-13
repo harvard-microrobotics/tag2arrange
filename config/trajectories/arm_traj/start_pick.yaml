@@ -49,10 +49,5 @@ trajectory:
     #orientation: [179.5,0,-135]
     #linear_velocity:
     #angular_velocity:
-  - time: 4.0
-    position: [0.090, -0.500, 0.100]
-    orientation: [0,-0,-0.9239,0.3827]
-    #orientation: [179.5,0,-135]
-    #linear_velocity:
-    #angular_velocity:  
+  
   

@@ -84,7 +84,7 @@ class Controller:
         return self.items[str(tag_id)]['arrange']
     def get_height(self,tag_id):
         #Check tag id is in items
-        #If it is in items, extract the arrangement value and return        
+        #If it is in items, extract the height value and return        
         return self.items[str(tag_id)]['height']
     def send_setpoint(self, pressures, transition_time=None, p_ctrl=False):
 

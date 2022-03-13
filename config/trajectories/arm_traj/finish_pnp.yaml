@@ -32,7 +32,7 @@ settings:
 
 trajectory:
   - time: 0.0
-    position: [-0.400, -0.400, 0.100]
+    position: [-0.400, -0.400, 0.150]
     orientation: [0,-0,-0.9239,0.3827]
     #orientation: [179.5,0,-135]
     #linear_velocity:
