@@ -20,6 +20,7 @@ from pressure_controller_ros.live_traj_new import trajSender as pneu_traj_sender
 
 import rospkg
 from simple_ur_move.cartesian_trajectory_handler import CartesianTrajectoryHandler
+import simple_ur_move.utils as utils
 
 class Controller:
     def __init__(self, pressure_server = "dynamixel"):
@@ -62,7 +63,7 @@ class Controller:
             self.start_pick = rospy.get_param(rospy.get_name()+'/start_pick',None)
             self.end_place= rospy.get_param(rospy.get_name()+'/end_place',None)
             self.finish_pnp = rospy.get_param(rospy.get_name()+'/finish_pnp',None)
-            #filepath_config = os.path.join(rospkg.RosPack().get_path('tag2arrange'), 'config')            
+            
         # Connect a callback function to send single desrired arrangement commands 
         arrange_topic = rospy.get_param(rospy.get_name()+"/arrange_topic",'/desired_arrange')
         
@@ -81,7 +82,10 @@ class Controller:
         #Check tag id is in items
         #If it is in items, extract the arrangement value and return        
         return self.items[str(tag_id)]['arrange']
-    
+    def get_height(self,tag_id):
+        #Check tag id is in items
+        #If it is in items, extract the arrangement value and return        
+        return self.items[str(tag_id)]['height']
     def send_setpoint(self, pressures, transition_time=None, p_ctrl=False):
 
         if transition_time is None:
@@ -148,6 +152,9 @@ class Controller:
         arrange = self.get_arrange(tag_id[0]) #[0] is because tag_id comes as a tuple
         arrange = [arrange] #For formatting, should probably change later
         
+        if arm_on:
+            self.height = self.get_arrange(tag_id[0])
+            self.height = 0.05
         
         # Send arrangement value
         if arrange is not None:       
@@ -163,18 +170,18 @@ class Controller:
                         #Run trajectory to get in position  
                         self.run_armtraj(self.start_pick) 
                     print("Grasp Item")                     
-                    self.run_traj(self.start_grasp)
+                    self.run_traj(self.start_grasp,modify=True,step=0)
                     
                     if self.arm_on:
                         print("Move the item to box")
                         #After grasping, 
-                        self.run_armtraj(self.end_place)
+                        self.run_armtraj(self.end_place,modify=True,step=1)
                     print("Release item")    
                     self.run_traj(self.end_grasp)
                     if self.arm_on:
                         print("Move back to start")
                         #After grasping, 
-                        self.run_armtraj(self.finish_pnp)
+                        self.run_armtraj(self.finish_pnp,modify=True,step=2)
 
                     
         elif not self.is_init:
@@ -193,11 +200,7 @@ class Controller:
         # Load a trajectory from a file and make some modifications on the fly
         file_to_use = traj
         builder.load_traj_def(file_to_use)
-        traj_def = builder.get_definition()
-        #traj_def['setpoints'][0] = [0.00, 10,10,  10,10,  10,10,  10,10] # Make some modifications to the definition (i.e. change some waypoints)
-        #traj_def['config']['setpoints']['main'][0] = [0.00, 10,10,  10,10,  10,10,  10,10] 
-        #traj_def['config']['setpoints']['prefix'][0] = [0.00, 10,10,  10,10,  10,10,  10,10] 
-        #traj_def['config']['setpoints']['suffix'][0] = [0.00, 10,10,  10,10,  10,10,  10,10] 
+        traj_def = builder.get_definition()        
         builder.set_definition(traj_def) # Reset the definition (this also rebuilds the trajectory)
 
         # Alternatively, you can forgo the "load from file" step and set the trajectory
@@ -212,14 +215,30 @@ class Controller:
         traj_ros = hand_sender.build_traj(traj_use) # Convert the trajectory to a ROS trajectory
         hand_sender.execute_traj(traj_ros, blocking=False) # Send the trajectory
         hand_sender.traj_client.wait_for_result() # wait until the trajectory is finished
-    def run_armtraj(self,traj):
+    def run_armtraj(self,traj,modify=False,step=0):
         '''
             Run motion trajectory for robotic arm
         '''
+        
         # OR Set trajectory config directly
         #config={TRAJECTORY CONFIG DICT}
         #traj_handler.set_config(config)
-        self.traj_handler.load_config(filename=traj)        
+        if modify:
+            config = utils.load_yaml(traj)
+            traj  = config.get('trajectory')
+            if step == 0:
+                times = [2]
+            elif step == 1:
+                times = [0,3]
+            elif step == 2:
+                times = [0]
+            else:
+                time = []    
+            for time in times:        
+                traj[time]['position'][2] = self.height + 0.09
+            traj_handler.set_config(config)
+        else:         
+            self.traj_handler.load_config(filename=traj)
         self.traj_handler.set_initialize_time(3.0)
         self.traj_handler.run_trajectory(blocking=True)
         self.traj_handler.shutdown()
