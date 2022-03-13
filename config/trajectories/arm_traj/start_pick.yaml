@@ -1,7 +1,7 @@
 settings:
   units: 
     position: 'm' # m (meter), mm (millimeter)
-    orientation: 'euler_degrees' # euler_degrees, euler_radians, quaternion
+    orientation: 'quaternion' # euler_degrees, euler_radians, quaternion
 
   controlled_frame: 'tool0'
 
@@ -33,22 +33,26 @@ settings:
 trajectory:
   - time: 0
     position: [-0.100, -0.500, 0.200]
-    orientation: [179.5,0,-135]
+    orientation: [0,-0,-0.9239,0.3827]
+    #orientation: [179.5,0,-135]
     #linear_velocity:
     #angular_velocity:
   - time: 1.0
     position: [0.090, -0.500, 0.200]
-    orientation: [179.5,0,-135]
+    orientation: [0,-0,-0.9239,0.3827]
+    #orientation: [179.5,0,-135]
     #linear_velocity:
     #angular_velocity:
   - time: 2.0
     position: [0.090, -0.500, 0.100]
-    orientation: [179.5,0,-135]
+    orientation: [0,-0,-0.9239,0.3827]
+    #orientation: [179.5,0,-135]
     #linear_velocity:
     #angular_velocity:
   - time: 4.0
     position: [0.090, -0.500, 0.100]
-    orientation: [179.5,0,-135]
+    orientation: [0,-0,-0.9239,0.3827]
+    #orientation: [179.5,0,-135]
     #linear_velocity:
     #angular_velocity:  
   
