@@ -54,7 +54,7 @@ class Controller:
             self.set_data_stream(True)
 
         self.arm_on = rospy.get_param(rospy.get_name()+"/arm",False)
-        self.arm_traj = rospy.get_param(rospy.get_name()+'/arm_traj_profile')
+        #self.arm_traj = rospy.get_param(rospy.get_name()+'/arm_traj_profile')
         if self.arm_on:
             self.traj_handler = CartesianTrajectoryHandler(
                 name="",
@@ -152,7 +152,7 @@ class Controller:
         arrange = self.get_arrange(tag_id[0]) #[0] is because tag_id comes as a tuple
         arrange = [arrange] #For formatting, should probably change later
         
-        if arm_on:
+        if self.arm_on:
             self.height = self.get_arrange(tag_id[0])
             self.height = 0.05
         
@@ -168,9 +168,9 @@ class Controller:
                     if self.arm_on:
                         print("Move to item")
                         #Run trajectory to get in position  
-                        self.run_armtraj(self.start_pick) 
+                        self.run_armtraj(self.start_pick,modify=True,step=0) 
                     print("Grasp Item")                     
-                    self.run_traj(self.start_grasp,modify=True,step=0)
+                    self.run_traj(self.start_grasp)
                     
                     if self.arm_on:
                         print("Move the item to box")
@@ -236,7 +236,7 @@ class Controller:
                 time = []    
             for time in times:        
                 traj[time]['position'][2] = self.height + 0.09
-            traj_handler.set_config(config)
+            self.traj_handler.set_config(config)
         else:         
             self.traj_handler.load_config(filename=traj)
         self.traj_handler.set_initialize_time(3.0)
@@ -252,7 +252,9 @@ class Controller:
         time.sleep(2.2)
         print('Turning off data stream')
         self.set_data_stream(False)
-        time.sleep(0.5)    
+        time.sleep(0.5)
+        if self.arm_on:
+            self.traj_handler.shutdown()
             
         
         #self.command_client.cancel_all_goals()
