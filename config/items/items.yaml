@@ -19,9 +19,9 @@ items:
      '21': {name: test3, arrange: 45,  height: 0.02},
      '22': {name: test4, arrange: 80,  height: 0.02},
      '23': {name: test5, arrange: 0,  height: 0.02},
-     '12': {name: test6, arrange: 0,  height: 0.02},
-     '13': {name: test6, arrange: 0, height: 0.02},
-     '14': {name: test6, arrange: 85, height: 0.04},
+     '12': {name: test6, arrange: 0,  height: 0.04},
+     '13': {name: test6, arrange: 0, height: 0.045},
+     '14': {name: test6, arrange: 85, height: 0.0225},
    }
 
   

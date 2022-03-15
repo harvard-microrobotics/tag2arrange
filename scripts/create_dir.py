@@ -26,7 +26,7 @@ def main():
 		name = item_info['Name']
 		arrange = arranges[i]
 		height = item_info['Height (mm)']		
-		item_dict[str(tag_id)] = {'name': name,'arrange': arrange,'height': float(height)/1000}
+		item_dict[str(tag_id)] = {'name': name,'arrange': arrange,'height': float(height)/2/1000}
 	item_list = {'items':{'items':item_dict}}
 	with open(os.path.join(base_folder,'objects.yaml'), 'w') as file:
 		item_file=yaml.dump(item_list, file)

@@ -33,16 +33,16 @@ settings:
 trajectory:
   - time: 0.0
     position: [-0.400, -0.400, 0.150]
-    orientation: [180, 0, -135]
+    orientation: [180, 0, 225]
     #orientation: [179.5,0,-135]
     #linear_velocity:
     #angular_velocity:
   - time: 1.0
-    position: [-0.400, -0.400, 0.200]
-    orientation: [180, 0, -135]
+    position: [-0.400, -0.400, 0.300]
+    orientation: [180, 0, 225]
     #orientation: [179.5,0,-135]  
   - time: 2.0  
-    position: [-0.100, -0.500, 0.200]
-    orientation: [180, 0, -135]
+    position: [-0.100, -0.500, 0.300]
+    orientation: [180, 0, 225]
     #orientation: [179.5,0,-135]
   

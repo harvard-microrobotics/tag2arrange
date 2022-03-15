@@ -153,8 +153,8 @@ class Controller:
         arrange = [arrange] #For formatting, should probably change later
         
         if self.arm_on:
-            self.height = self.get_arrange(tag_id[0])
-            self.height = 0.05
+            self.height = self.get_height(tag_id[0])
+            #self.height = 0.05
         
         # Send arrangement value
         if arrange is not None:       
@@ -235,7 +235,7 @@ class Controller:
             else:
                 time = []    
             for time in times:        
-                traj[time]['position'][2] = self.height + 0.09
+                traj[time]['position'][2] = self.height + 0.05
             self.traj_handler.set_config(config)
         else:         
             self.traj_handler.load_config(filename=traj)
