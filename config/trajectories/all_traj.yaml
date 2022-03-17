@@ -1,3 +1,4 @@
+pre_grasp: "/home/armando/Documents/morpheus_ws/src/tag2arrange/config/trajectories/finger_traj/pre_grasp"
 start_grasp: "/home/armando/Documents/morpheus_ws/src/tag2arrange/config/trajectories/finger_traj/start_grasp"
 end_grasp: "/home/armando/Documents/morpheus_ws/src/tag2arrange/config/trajectories/finger_traj/end_grasp"
 start_pick: "/home/armando/Documents/morpheus_ws/src/tag2arrange/config/trajectories/arm_traj/start_pick.yaml"

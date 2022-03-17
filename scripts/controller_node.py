@@ -35,6 +35,7 @@ class Controller:
 
         #Load Finger Trajectory information 
         #self.traj_profile = rospy.get_param(rospy.get_name()+'/traj_profile')
+        self.pre_grasp = rospy.get_param(rospy.get_name()+'/pre_grasp',None)
         self.start_grasp = rospy.get_param(rospy.get_name()+'/start_grasp',None)
         self.end_grasp = rospy.get_param(rospy.get_name()+'/end_grasp',None)  
         self.speed_factor = rospy.get_param(rospy.get_name()+'/speed_factor',1.0)
@@ -164,7 +165,8 @@ class Controller:
                 self.send_setpoint(arrange)
                 self.curr_arrange = arrange
                 if self.p_ctrl:
-                    time.sleep(2)
+                    time.sleep(0.5)
+                    self.run_traj(self.pre_grasp)
                     if self.arm_on:
                         print("Move to item")
                         #Run trajectory to get in position  
