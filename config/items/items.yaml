@@ -4,12 +4,13 @@ items:
 # ## General remarks#
 #
 # - name is optional
+# - height represents centroid in meters
 #
 # ### Syntax
 #
 # items:
 #   {
-#     'TAG_ID':{name: ITEM_NAME, arrange: ARRANGEMENT_VALUE},
+#     'TAG_ID':{name: ITEM_NAME, arrange: ARRANGEMENT_VALUE, height: HEIGHT/2},
 #     ...
 #   }
 
