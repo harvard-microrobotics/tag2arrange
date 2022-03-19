@@ -13,9 +13,10 @@ def main():
 	df = load_convert(file) 
 	df['Aspect Ratio'] = df['Length (mm)'] / df['Width (mm)']
 	#Create data to predict
-	data = [df['Aspect Ratio'],df['Height (mm)'],df['Object Shape']] 
+	data = [df['Aspect Ratio'],df['Height (mm)'],df['Object Shape']] 	
 	headers = ['Aspect Ratio','Height','Object Shape']
 	data_df = pd.concat(data, axis=1, keys=headers)
+	print(data_df)
 	arranges = predict(data_df) #[45]#
 	#Create yaml from prediction and item csv
 	num_items = df.shape[0] 	
@@ -42,12 +43,16 @@ def predict(data_test):
 	'''
 		Load the trained classifier and predict the arrangement value
 	'''
-	file = os.path.join(base_folder,'SVC.pmml')	
+	file = os.path.join(base_folder,'RandomForest.pmml')	
 	model = Model.fromFile(file)
 	result = model.predict(data_test)
 	print(result)
-	x = result['predicted_Arrangement']
-	y = (np.array(x)-1)/4 * 90
+	result_np = result.to_numpy()
+	pred = []
+	for probs in result_np:
+	    pred.append(np.argmax(probs)+1)
+	x = pred	
+	y = (np.array(x)-1)/4.0*90.0	
 	return y
 if __name__ == '__main__':
     main()
