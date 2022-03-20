@@ -3,10 +3,9 @@ import pandas as pd
 import os
 import sys 
 import numpy as np
-import pickle
 from pypmml import Model
 
-base_folder="/home/ranstlouis/catkin_ws/src/tag2arrange/config/items"
+base_folder="../config/items"
 #Load csv 
 def main():
 	file = 'items.csv'

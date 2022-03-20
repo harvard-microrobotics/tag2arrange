@@ -15,11 +15,11 @@ items:
 #   }
 
   items:  
-    {'19': {name: test1, arrange: 90,  height: 0.02}, 
+    {'19': {name: test1, arrange: 5,  height: 0.01}, 
      '20': {name: test2, arrange: 5,  height: 0.0275},
      '21': {name: test3, arrange: 80,  height: 0.11},
-     '22': {name: test4, arrange: 80,  height: 0.02},
-     '23': {name: test5, arrange: 0,  height: 0.02},
+     '22': {name: test4, arrange: 0,  height: 0.04},
+     '23': {name: test5, arrange: 0,  height: 0.032},
      '12': {name: test6, arrange: 0,  height: 0.04},
      '13': {name: test6, arrange: 0, height: 0.045},
      '14': {name: test6, arrange: 85, height: 0.0225},
