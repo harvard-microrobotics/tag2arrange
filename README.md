@@ -1,6 +1,6 @@
 # Tag2Arrange
 
-Using April tags to control finger arrangement
+Using April tags to control finger arrangement, pressure controllers and robot arm trajectories
 
 ## Installation
 1. Install [ROS](https://www.ros.org/)
@@ -16,16 +16,20 @@ Using April tags to control finger arrangement
     4. Clone my [video_recorder](https://github.com/cbteeple/ros_video_recorder) package into the src folder (_optional_)
     5. Clone my [rosbag_recorder](https://github.com/cbteeple/rosbag-recorder) package into the src folder (_optional_)
     6. Run `catkin_make`
-4. [Set up your `~/.bashrc` file](https://docs.cbteeple.com/robot/ros#setting-up-ros-on-linux) to source both workspaces
+4. Set up the [robot arm control package](https://github.com/cbteeple/simple_ur_move) in same workspace as the pressure controller
+5. [Set up your `~/.bashrc` file](https://docs.cbteeple.com/robot/ros#setting-up-ros-on-linux) to source both workspaces
 
-## Setup
+## Setup AprilTags
 1. Set up AprilTag config files to specify your tag properties.
 2. Make a new verison of `usb_cam-test.launch` to use your camera settings
 3. [Calibrate your camera](https://github.com/NVlabs/Deep_Object_Pose/blob/master/doc/camera_tutorial.md)
-4. Set up a controller in the `config/controllers` directory.
-5. Set up item directory in the `config/items` directory.
+## Setup Items
+1. Set up item directory in the `config/items` directory.
+To create this directory from item geometry:
+    1. Create a spreadsheet listing the item's tag id, length, width, height and object shape
+    2. Import a trained model as a pmml file
+    3. Run the `create_dir.py` script which will output a yaml file
     
-
 ## Usage
 
 1. Start running the camera (publishes data to the `usb_cam/image_raw` topic)
@@ -39,5 +43,7 @@ Using April tags to control finger arrangement
     - `roslaunch pressure_controller_ros bringup_HID.launch profile:=anthro8 hw_profile:=hid`
 5. Start Dynamixel motor
     - `roslaunch pressure_controller_configs bringup_dynamixel.launch profile:=dynamixel_single hw_profile:=dynamixel_default`
-7. Start the controller
-    - `roslaunch tag2arrange run_controller.launch pctrl:=True`
+7. Start the robot arm with the teach pendant program
+    - `roslaunch ur_user_calibration bringup_armando.launch`
+9. Start the controller
+    - `roslaunch tag2arrange run_controller.launch pctrl:=True arm:=True`
