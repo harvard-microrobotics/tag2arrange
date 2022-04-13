@@ -27,7 +27,7 @@ Using April tags to control finger arrangement, pressure controllers and robot a
 1. Set up item directory in the `config/items` directory.
 To create this directory from item geometry:
     1. Create a spreadsheet listing the item's tag id, length, width, height and object shape
-    2. Import a trained model as a pmml file
+    2. Import a trained classification model as a pmml file
     3. Run the `create_dir.py` script which will output a yaml file
     
 ## Usage
@@ -43,7 +43,7 @@ To create this directory from item geometry:
     - `roslaunch pressure_controller_ros bringup_HID.launch profile:=anthro8 hw_profile:=hid`
 5. Start Dynamixel motor
     - `roslaunch pressure_controller_configs bringup_dynamixel.launch profile:=dynamixel_single hw_profile:=dynamixel_default`
-7. Start the robot arm with the teach pendant program
+6. Start the robot arm with the teach pendant program
     - `roslaunch ur_user_calibration bringup_armando.launch`
-9. Start the controller
+7. Start the controller
     - `roslaunch tag2arrange run_controller.launch pctrl:=True arm:=True`
