@@ -8,7 +8,8 @@ Using April tags to control finger arrangement, pressure controllers and robot a
     1. Make a [new catkin workspace](http://wiki.ros.org/catkin/Tutorials/create_a_workspace)
     2. Clone the [AprilTag ROS package](https://github.com/AprilRobotics/apriltag_ros)
     3. Clone the [USB cam package](http://wiki.ros.org/usb_cam)
-    4. Run `catkin_make_isolated`
+    4. Install dependencies: `sudo apt install python3-rosdep2`
+    5. Run `catkin_make_isolated`
 3. Set up your pressure control workspace
     1. Make another new catkin workspace
     2. Set up my [pressure controller package](https://ctrl-p.cbteeple.com/latest/ros-driver)
